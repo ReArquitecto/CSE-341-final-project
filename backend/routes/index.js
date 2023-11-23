@@ -10,6 +10,16 @@ router.get(
 
 router.use('/api-docs', require('./swagger.js'));
 
+router.use('/course-instances', require('./course-instances.js'));
+
+router.use('/courses', require('./courses.js'));
+
+router.use('/enrollments', require('./enrollments.js'));
+
 router.use('/students', require('./students.js'));
+
+router.use('/teachers', require('./teachers.js'));
+
+
 
 module.exports = router;
