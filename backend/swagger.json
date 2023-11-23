@@ -7,16 +7,11 @@
   },
   "host": "localhost:8080",
   "basePath": "/",
-  "schemes": [
-    "http",
-    "https"
-  ],
+  "schemes": ["http", "https"],
   "paths": {
     "/": {
       "get": {
-        "tags": [
-          "Home"
-        ],
+        "tags": ["Home"],
         "description": "",
         "responses": {
           "200": {
@@ -37,13 +32,9 @@
     },
     "/students/": {
       "get": {
-        "tags": [
-          "students"
-        ],
+        "tags": ["students"],
         "description": "",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK"
@@ -54,9 +45,7 @@
         }
       },
       "post": {
-        "tags": [
-          "students"
-        ],
+        "tags": ["students"],
         "description": "",
         "parameters": [
           {
@@ -96,13 +85,9 @@
     },
     "/students/{id}": {
       "get": {
-        "tags": [
-          "students"
-        ],
+        "tags": ["students"],
         "description": "",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "id",
@@ -121,9 +106,7 @@
         }
       },
       "put": {
-        "tags": [
-          "students"
-        ],
+        "tags": ["students"],
         "description": "",
         "parameters": [
           {
@@ -167,9 +150,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "students"
-        ],
+        "tags": ["students"],
         "description": "",
         "parameters": [
           {

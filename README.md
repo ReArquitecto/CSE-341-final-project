@@ -8,3 +8,10 @@ Check out the site for this project at https://enrollment-system-0o9t.onrender.c
 ## Please use linting and prettier before pushing to the repo
 - npm run lint
 - npm run prettier
+
+## Database collections
+- course-instances
+- courses
+- enrollments
+- students
+- teachers
