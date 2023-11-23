@@ -20,6 +20,4 @@ router.use('/students', require('./students.js'));
 
 router.use('/teachers', require('./teachers.js'));
 
-
-
 module.exports = router;

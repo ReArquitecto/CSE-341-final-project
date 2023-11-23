@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const courseInstancesController = require('../controllers/students.js');
+const courseInstancesController = require('../controllers/course-instances');
 
 // router.get('/', (req, res) => { res.send('Hello from the course-instances.js routes file!'); });
 

@@ -2,7 +2,7 @@ const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
 
 const getAllStudents = async (req, res) => {
-  //#swagger.tags=['students'];
+  //#swagger.tags=['Students'];
   try {
     const db = mongodb.getDb();
     const students = await db.collection('students').find().toArray();
@@ -14,7 +14,7 @@ const getAllStudents = async (req, res) => {
 };
 
 const getSingleStudent = async (req, res) => {
-  //#swagger.tags=['students'];
+  //#swagger.tags=['Students'];
   const studentId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDb()
@@ -32,7 +32,7 @@ const getSingleStudent = async (req, res) => {
 };
 
 const createStudent = async (req, res) => {
-  //#swagger.tags=['students'];
+  //#swagger.tags=['Students'];
   const student = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -52,7 +52,7 @@ const createStudent = async (req, res) => {
 };
 
 const updateStudent = async (req, res) => {
-  //#swagger.tags=['students'];
+  //#swagger.tags=['Students'];
   const studentId = new ObjectId(req.params.id);
   const student = {
     firstName: req.body.firstName,
@@ -73,7 +73,7 @@ const updateStudent = async (req, res) => {
 };
 
 const deleteStudent = async (req, res) => {
-  //#swagger.tags=['students'];
+  //#swagger.tags=['Students'];
   const studentId = new ObjectId(req.params.id);
   const response = await mongodb
     .getDb()
