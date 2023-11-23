@@ -1,0 +1,30 @@
+### Get all students
+GET http://localhost:8080/students
+
+### Get a student by id
+GET http://localhost:8080/students/655ea60f0f0fb4989efd4671
+
+### Create a student
+POST http://localhost:8080/students HTTP/1.1
+content-type: application/json
+{
+    "firstName": "John",
+    "lastName": "Smith",
+    "email": "john@gmail.com",
+    "favoriteColor": "black",
+    "birthday": "1980-01-01"
+}
+
+### PUT student
+PUT http://localhost:8080/students/655ea60f0f0fb4989efd4671 HTTP/1.1
+content-type: application/json
+{
+    "firstName": "John",
+    "lastName": "Smith",
+    "email": "change@gmail.com",
+    "favoriteColor": "new color",
+    "birthday": "1980-01-01"
+}
+
+### DELETE student
+DELETE http://localhost:8080/students/65583760a46b7f455174dd93 HTTP/1.1
