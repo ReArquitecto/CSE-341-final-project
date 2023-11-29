@@ -7,7 +7,7 @@ const getAllCourseInstances = async (req, res) => {
   try {
     const db = mongodb.getDb();
     const courseInstances = await db
-      .collection('courseInstances')
+      .collection('course-instances')
       .find()
       .toArray();
     res.setHeader('Content-Type', 'application/json');
@@ -25,7 +25,7 @@ const getSingleCourseInstance = async (req, res) => {
   try {
     const db = mongodb.getDb();
     const courseInstance = await db
-      .collection('courseInstances')
+      .collection('course-instances')
       .findOne({ _id: new ObjectId(req.params.id) });
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(courseInstance);
@@ -88,7 +88,7 @@ const createCourseInstance = async (req, res) => {
       maxStudentCount,
     };
 
-    const response = await db.collection('courseInstances').insertOne(courseInstance);
+    const response = await db.collection('course-instances').insertOne(courseInstance);
     if (response.acknowledged) {
       res.status(201).json({ message: 'Course instance created' });
     } else {
@@ -154,7 +154,7 @@ const updateCourseInstance = async (req, res) => {
       maxStudentCount,
     };
 
-    const response = await db.collection('courseInstances').updateOne(
+    const response = await db.collection('course-instances').updateOne(
       { _id: courseInstanceId },
       { $set: courseInstance },
     );
@@ -175,7 +175,7 @@ const deleteCourseInstance = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
   try {
     const db = mongodb.getDb();
-    const response = await db.collection('courseInstances').deleteOne(
+    const response = await db.collection('course-instances').deleteOne(
       { _id: new ObjectId(req.params.id) },
     );
     res.setHeader('Content-Type', 'application/json');

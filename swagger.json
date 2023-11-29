@@ -7,6 +7,28 @@
   },
   "host": "enrollment-system-0o9t.onrender.com",
   "basePath": "/",
+  "tags": [
+    {
+      "name": "Teachers",
+      "description": "Operations related to Teachers"
+    },
+    {
+      "name": "Courses",
+      "description": "Operations related to Courses"
+    },
+    {
+      "name": "Course-Instances",
+      "description": "Operations related to Course Instances"
+    },
+    {
+      "name": "Students",
+      "description": "Operations related to Students"
+    },
+    {
+      "name": "Enrollments",
+      "description": "Operations related to Enrollments"
+    }
+  ],
   "schemes": [
     "https"
   ],
