@@ -2,17 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 const teachersController = require('../controllers/teachers.js');
-
-// router.get('/', (req, res) => { res.send('Hello from the teachers.js routes file!'); });
+const { isAuthenticated } = require('../middleware/authenticate.js');
 
 router.get('/', teachersController.getAllTeachers);
-
 router.get('/:id', teachersController.getSingleTeacher);
-
-router.post('/', teachersController.createTeacher);
-
-router.put('/:id', teachersController.updateTeacher);
-
-router.delete('/:id', teachersController.deleteTeacher);
+router.post('/', isAuthenticated, teachersController.createTeacher);
+router.put('/:id', isAuthenticated, teachersController.updateTeacher);
+router.delete('/:id', isAuthenticated, teachersController.deleteTeacher);
 
 module.exports = router;

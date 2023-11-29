@@ -2,17 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 const enrollmentsController = require('../controllers/enrollments.js');
-
-// router.get('/', (req, res) => { res.send('Hello from the enrollments.js routes file!'); });
+const { isAuthenticated } = require('../middleware/authenticate.js');
 
 router.get('/', enrollmentsController.getAllEnrollments);
-
 router.get('/:id', enrollmentsController.getSingleEnrollment);
-
-router.post('/', enrollmentsController.createEnrollment);
-
-router.put('/:id', enrollmentsController.updateEnrollment);
-
-router.delete('/:id', enrollmentsController.deleteEnrollment);
+router.post('/', isAuthenticated, enrollmentsController.createEnrollment);
+router.put('/:id', isAuthenticated, enrollmentsController.updateEnrollment);
+router.delete('/:id', isAuthenticated, enrollmentsController.deleteEnrollment);
 
 module.exports = router;
