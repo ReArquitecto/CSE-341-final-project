@@ -1,5 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
+const validator = require('validator');
 
 const getAllCourses = async (req, res) => {
   //#swagger.tags=['Courses'];
