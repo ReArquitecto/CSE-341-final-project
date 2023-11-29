@@ -5,10 +5,9 @@
     "description": "API Documentation for Student Enrollment API",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "enrollment-system-0o9t.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http",
     "https"
   ],
   "paths": {

@@ -5,8 +5,8 @@ const doc = {
     title: 'Student Enrollment API',
     description: 'API Documentation for Student Enrollment API',
   },
-  host: 'localhost:8080',
-  schemes: ['http', 'https'],
+  host: 'enrollment-system-0o9t.onrender.com',
+  schemes: ['https'],
 };
 
 const outputFile = './swagger.json';
