@@ -5,10 +5,10 @@
     "description": "API Documentation for Student Enrollment API",
     "version": "1.0.0"
   },
-  "host": "enrollment-system-0o9t.onrender.com",
+  "host": "localhost:8080",
   "basePath": "/",
   "schemes": [
-    "https"
+    "http"
   ],
   "paths": {
     "/login": {
@@ -109,6 +109,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "412": {
+            "description": "Precondition Failed"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -197,6 +200,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "412": {
+            "description": "Precondition Failed"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -272,6 +278,12 @@
                 },
                 "description": {
                   "example": "any"
+                },
+                "credit_hours": {
+                  "example": "any"
+                },
+                "prerequisites": {
+                  "example": "any"
                 }
               }
             }
@@ -286,6 +298,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           }
         }
       }
@@ -345,6 +360,12 @@
                 },
                 "description": {
                   "example": "any"
+                },
+                "credit_hours": {
+                  "example": "any"
+                },
+                "prerequisites": {
+                  "example": "any"
                 }
               }
             }
@@ -359,6 +380,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           }
         }
       },
@@ -438,6 +462,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "412": {
+            "description": "Precondition Failed"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -507,6 +534,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           },
           "500": {
             "description": "Internal Server Error"
@@ -610,6 +640,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "412": {
+            "description": "Precondition Failed"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -656,36 +689,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "firstName": {
-                  "example": "any"
-                },
-                "lastName": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "birthday": {
-                  "example": "any"
-                },
-                "gender": {
-                  "example": "any"
-                },
-                "address": {
-                  "example": "any"
-                },
-                "phoneNumber": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
@@ -697,6 +700,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           }
         }
       },
@@ -771,12 +777,6 @@
                 "email": {
                   "example": "any"
                 },
-                "birthday": {
-                  "example": "any"
-                },
-                "gender": {
-                  "example": "any"
-                },
                 "address": {
                   "example": "any"
                 },
@@ -799,6 +799,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           },
           "500": {
             "description": "Internal Server Error"
@@ -862,12 +865,6 @@
                 "email": {
                   "example": "any"
                 },
-                "birthday": {
-                  "example": "any"
-                },
-                "gender": {
-                  "example": "any"
-                },
                 "address": {
                   "example": "any"
                 },
@@ -890,6 +887,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "412": {
+            "description": "Precondition Failed"
           },
           "500": {
             "description": "Internal Server Error"

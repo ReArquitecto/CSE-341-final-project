@@ -1,6 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
-const validator = require('validator');
+
 
 const getAllTeachers = async (req, res) => {
   //#swagger.tags=['Teachers'];
@@ -43,34 +43,17 @@ const createTeacher = async (req, res) => {
     const db = mongodb.getDb();
 
     // Destructure and trim & sanitize required fields
-    let { firstName, lastName, email, birthday, gender, address, phoneNumber, subject } = req.body;
+    let { firstName, lastName, email, address, phoneNumber, subject } = req.body;
 
-    firstName = validator.trim(firstName);
-    lastName = validator.trim(lastName);
-    email = validator.normalizeEmail(validator.trim(email));
-    address = validator.trim(address);
-    phoneNumber = validator.trim(phoneNumber);
-    subject = validator.trim(subject);
+    firstName = firstName;
+    lastName = lastName;
+    email = email;
+    address = address;
+    phoneNumber = phoneNumber;
+    subject = subject;
 
-    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber || !subject) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
+   
 
-    // Validate email
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: 'Invalid email' });
-    }
-
-    // Validate gender
-    const validGenders = ['Male', 'Female', 'Non-Binary', 'Other'];
-    if (!validGenders.includes(gender)) {
-      return res.status(400).json({ message: 'Invalid gender' });
-    }
-
-    // Validate birthday
-    if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday' });
-    }
 
     // Check if teacher already exists
     const existingTeacher = await db
@@ -81,7 +64,7 @@ const createTeacher = async (req, res) => {
     }
 
     // Create new teacher
-    const teacher = { firstName, lastName, email, birthday, gender, address, phoneNumber, subject };
+    const teacher = { firstName, lastName, email, address, phoneNumber, subject };
     const response = await db.collection('teachers').insertOne(teacher);
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(response);
@@ -97,40 +80,25 @@ const updateTeacher = async (req, res) => {
   //#swagger.tags=['Teachers'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const teacherId = new ObjectId(req.params.id);
 
     // Destructure and trim & sanitize required fields
-    let { firstName, lastName, email, birthday, gender, address, phoneNumber, subject } = req.body;
+    let { firstName, lastName, email, address, phoneNumber, subject } = req.body;
 
-    firstName = validator.trim(firstName);
-    lastName = validator.trim(lastName);
-    email = validator.normalizeEmail(validator.trim(email));
-    address = validator.trim(address);
-    phoneNumber = validator.trim(phoneNumber);
-    subject = validator.trim(subject);
+    firstName = firstName;
+    lastName = lastName;
+    email = email;
+    address = address;
+    phoneNumber = phoneNumber;
+    subject = subject;
 
-    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber || !subject) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
 
-    // Validate email
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: 'Invalid email' });
-    }
-
-    // Validate gender
-    const validGenders = ['Male', 'Female', 'Non-Binary', 'Other'];
-    if (!validGenders.includes(gender)) {
-      return res.status(400).json({ message: 'Invalid gender' });
-    }
-
-    // Validate birthday
-    if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday' });
-    }
-
+   
     // Update teacher
-    const teacher = {firstName, lastName, email, birthday, gender, address, phoneNumber, subject};
+    const teacher = {firstName, lastName, email, address, phoneNumber, subject};
     const response = await db.collection('teachers').updateOne(
       { _id: teacherId },
       { $set: teacher },

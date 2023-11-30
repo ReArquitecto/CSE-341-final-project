@@ -43,23 +43,10 @@ const createEnrollment = async (req, res) => {
     
     // Destructure trim and sanitize required fields
     let { courseInstanceId, studentId } = req.body;
-    courseInstanceId = validator.trim(courseInstanceId);
-    studentId = validator.trim(studentId);
+    courseInstanceId = courseInstanceId;
+    studentId =studentId;
 
-    if (!courseInstanceId || !studentId) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    // Validate courseInstanceId
-    if (!validator.isAlphanumeric(courseInstanceId)) {
-      return res.status(400).json({ message: 'Invalid courseInstanceId' });
-    }
-
-    // Validate studentId
-    if (!validator.isAlphanumeric(studentId)) {
-      return res.status(400).json({ message: 'Invalid studentId' });
-    }
-
+   
     const enrollment = {
       courseInstanceId,
       studentId,
@@ -83,14 +70,17 @@ const updateEnrollment = async (req, res) => {
   //#swagger.tags=['Enrollments'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const enrollmentId = new ObjectId(req.params.id);
     const { courseInstanceId, studentId } = req.body;
     const updateEnrollment = {};
     if (courseInstanceId) {
-      updateEnrollment.courseInstanceId = validator.trim(courseInstanceId);
+      updateEnrollment.courseInstanceId = courseInstanceId;
     }
     if (studentId) {
-      updateEnrollment.studentId = validator.trim(studentId);
+      updateEnrollment.studentId = studentId ;
     }
     const response = await db
       .collection('enrollments')

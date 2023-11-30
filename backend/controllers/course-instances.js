@@ -6,7 +6,7 @@ const getAllCourseInstances = async (req, res) => {
   try {
     const db = mongodb.getDb();
     const courseInstances = await db
-      .collection('courseInstances')
+      .collection('course-instances')
       .find()
       .toArray();
     res.setHeader('Content-Type', 'application/json');
@@ -24,7 +24,7 @@ const getSingleCourseInstance = async (req, res) => {
   try {
     const db = mongodb.getDb();
     const courseInstance = await db
-      .collection('courseInstances')
+      .collection('course-instances')
       .findOne({ _id: new ObjectId(req.params.id) });
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(courseInstance);
@@ -41,40 +41,17 @@ const createCourseInstance = async (req, res) => {
   try {
     const db = mongodb.getDb();
     
-    // Destructure trim and sanitize required fields
+
     let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
-    courseId = validator.trim(courseId);
-    teacherId = validator.trim(teacherId);
-    semester = validator.trim(semester);
-    year = validator.trim(year);
-    location = validator.trim(location);
-    time = validator.trim(time);
-    schedule = validator.trim(schedule);
-    maxStudentCount = validator.trim(maxStudentCount);
+    courseId =courseId;
+    teacherId =teacherId;
+    semester =semester;
+    year =year;
+    location =location;
+    time =time;
+    schedule =schedule;
+    maxStudentCount =maxStudentCount;
 
-    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    // Validate code
-    if (!validator.isAlphanumeric(courseId)) {
-      return res.status(400).json({ message: 'Invalid code' });
-    }
-
-    // Validate department
-    if (!validator.isAlphanumeric(teacherId)) {
-      return res.status(400).json({ message: 'Invalid department' });
-    }
-
-    // Validate year
-    if (!validator.isNumeric(year)) {
-      return res.status(400).json({ message: 'Invalid year' });
-    }
-
-    // Validate maxStudentCount
-    if (!validator.isNumeric(maxStudentCount)) {
-      return res.status(400).json({ message: 'Invalid maxStudentCount' });
-    }
 
     const courseInstance = {
       courseId,
@@ -87,7 +64,7 @@ const createCourseInstance = async (req, res) => {
       maxStudentCount,
     };
 
-    const response = await db.collection('courseInstances').insertOne(courseInstance);
+    const response = await db.collection('course-instances').insertOne(courseInstance);
     if (response.acknowledged) {
       res.status(201).json({ message: 'Course instance created' });
     } else {
@@ -105,42 +82,22 @@ const updateCourseInstance = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const courseInstanceId = new ObjectId(req.params.id);
 
-    // Destructure trim and sanitize required fields
+
     let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
-    courseId = validator.trim(courseId);
-    teacherId = validator.trim(teacherId);
-    semester = validator.trim(semester);
-    year = validator.trim(year);
-    location = validator.trim(location);
-    time = validator.trim(time);
-    schedule = validator.trim(schedule);
-    maxStudentCount = validator.trim(maxStudentCount);
+    courseId =courseId;
+    teacherId =teacherId;
+    semester =semester;
+    year =year;
+    location =location;
+    time =time;
+    schedule =schedule;
+    maxStudentCount =maxStudentCount;
 
-    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    // Validate code
-    if (!validator.isAlphanumeric(courseId)) {
-      return res.status(400).json({ message: 'Invalid code' });
-    }
-
-    // Validate department
-    if (!validator.isAlphanumeric(teacherId)) {
-      return res.status(400).json({ message: 'Invalid department' });
-    }
-
-    // Validate year
-    if (!validator.isNumeric(year)) {
-      return res.status(400).json({ message: 'Invalid year' });
-    }
-
-    // Validate maxStudentCount
-    if (!validator.isNumeric(maxStudentCount)) {
-      return res.status(400).json({ message: 'Invalid maxStudentCount' });
-    }
 
     const courseInstance = {
       courseId,
@@ -153,7 +110,7 @@ const updateCourseInstance = async (req, res) => {
       maxStudentCount,
     };
 
-    const response = await db.collection('courseInstances').updateOne(
+    const response = await db.collection('course-instances').updateOne(
       { _id: courseInstanceId },
       { $set: courseInstance },
     );
@@ -174,7 +131,7 @@ const deleteCourseInstance = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
   try {
     const db = mongodb.getDb();
-    const response = await db.collection('courseInstances').deleteOne(
+    const response = await db.collection('course-instances').deleteOne(
       { _id: new ObjectId(req.params.id) },
     );
     res.setHeader('Content-Type', 'application/json');
