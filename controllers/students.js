@@ -1,6 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
-
+const validator = require('validator');
 
 
 const getAllStudents = async (req, res) => {
@@ -46,15 +46,31 @@ const createStudent = async (req, res) => {
     // Destructure and trim & sanitize required fields
     let { firstName, lastName, email, birthday, gender, address, phoneNumber } = req.body;
 
-    firstName = firstName;
-    lastName = lastName;
-    email = email;
-    birthday = birthday,
-     gender =gender;
-    address = address;
-    phoneNumber = phoneNumber;
+    firstName = validator.trim(firstName);
+    lastName = validator.trim(lastName);
+    email = validator.normalizeEmail(validator.trim(email));
+    address = validator.trim(address);
+    phoneNumber = validator.trim(phoneNumber);
 
+    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
 
+    // Validate email
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email' });
+    }
+
+    // Validate gender
+    const validGenders = ['Male', 'Female', 'Non-Binary', 'Other'];
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({ message: 'Invalid gender' });
+    }
+
+    // Validate birthday
+    if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
+      return res.status(400).json({ message: 'Invalid birthday' });
+    }
 
     // Check if student already exists
     const existingStudent = await db
@@ -65,15 +81,7 @@ const createStudent = async (req, res) => {
     }
 
     // Create student
-    const student = {
-       firstName, 
-       lastName, 
-       email, 
-       birthday, 
-       gender,
-       address, 
-       phoneNumber
-       };
+    const student = { firstName, lastName, email, birthday, gender, address, phoneNumber };
     const response = await db.collection('students').insertOne(student);
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(response);
@@ -83,30 +91,33 @@ const createStudent = async (req, res) => {
       error: err.message,
     });
   }
-}
+};
+
 
 const updateStudent = async (req, res) => {
   //#swagger.tags=['Students'];
- 
   try {
     const db = mongodb.getDb();
-    if (!ObjectId.isValid(req.params.id)) {
-      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
-  }
     const studentId = new ObjectId(req.params.id);
+
+    // Destructure and validate required fields
+    const { firstName, lastName, email, birthday, gender, address, phoneNumber } = req.body;
+    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate email
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email' });
+    }
+
     // Update student
-    const student = {
-      firstName,
-      lastName,
-      email, 
-      birthday,
-      gender, 
-      address, 
-      phoneNumber};
+    const student = {firstName, lastName, email, birthday, gender, address, phoneNumber};
     const response = await db.collection('students').updateOne(
       { _id: studentId },
-      { $set: student },);
-      
+      { $set: student },
+    );
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(response);
   } catch (err) {
