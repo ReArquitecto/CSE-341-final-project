@@ -97,6 +97,9 @@ const updateTeacher = async (req, res) => {
   //#swagger.tags=['Teachers'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const teacherId = new ObjectId(req.params.id);
 
     // Destructure and trim & sanitize required fields

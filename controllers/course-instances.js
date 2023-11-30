@@ -20,6 +20,8 @@ const getAllCourseInstances = async (req, res) => {
   }
 };
 
+
+
 const getSingleCourseInstance = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
   try {
@@ -106,6 +108,9 @@ const updateCourseInstance = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const courseInstanceId = new ObjectId(req.params.id);
 
     // Destructure trim and sanitize required fields
