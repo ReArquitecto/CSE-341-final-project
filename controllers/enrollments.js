@@ -1,5 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
+const validator = require('validator');
 
 const getAllEnrollments = async (req, res) => {
   //#swagger.tags=['Enrollments'];
@@ -43,10 +44,23 @@ const createEnrollment = async (req, res) => {
     
     // Destructure trim and sanitize required fields
     let { courseInstanceId, studentId } = req.body;
-    courseInstanceId = courseInstanceId;
-    studentId =studentId;
+    courseInstanceId = validator.trim(courseInstanceId);
+    studentId = validator.trim(studentId);
 
-   
+    if (!courseInstanceId || !studentId) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate courseInstanceId
+    if (!validator.isAlphanumeric(courseInstanceId)) {
+      return res.status(400).json({ message: 'Invalid courseInstanceId' });
+    }
+
+    // Validate studentId
+    if (!validator.isAlphanumeric(studentId)) {
+      return res.status(400).json({ message: 'Invalid studentId' });
+    }
+
     const enrollment = {
       courseInstanceId,
       studentId,
@@ -70,17 +84,14 @@ const updateEnrollment = async (req, res) => {
   //#swagger.tags=['Enrollments'];
   try {
     const db = mongodb.getDb();
-    if (!ObjectId.isValid(req.params.id)) {
-      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
-    }
     const enrollmentId = new ObjectId(req.params.id);
     const { courseInstanceId, studentId } = req.body;
     const updateEnrollment = {};
     if (courseInstanceId) {
-      updateEnrollment.courseInstanceId = courseInstanceId;
+      updateEnrollment.courseInstanceId = validator.trim(courseInstanceId);
     }
     if (studentId) {
-      updateEnrollment.studentId = studentId ;
+      updateEnrollment.studentId = validator.trim(studentId);
     }
     const response = await db
       .collection('enrollments')
@@ -97,6 +108,7 @@ const updateEnrollment = async (req, res) => {
     });
   }
 }
+
 
 const deleteEnrollment = async (req, res) => {
   //#swagger.tags=['Enrollments'];
