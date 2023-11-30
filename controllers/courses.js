@@ -1,5 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
+const validator = require('validator');
 
 const getAllCourses = async (req, res) => {
   //#swagger.tags=['Courses'];
@@ -42,21 +43,48 @@ const createCourse = async (req, res) => {
     const db = mongodb.getDb();
     
     // Destructure trim and sanitize required fields
-    let { department, code, name, description, credit_hours, prerequisites } = req.body;
-    department = department;
-    code = code;
-    name = name;
-    description = description;
-    credit_hours = credit_hours;
-    prerequisites = prerequisites
+    let { department, code, name, description } = req.body;
+    department = validator.trim(department);
+    code = validator.trim(code);
+    name = validator.trim(name);
+    description = validator.trim(description);
+
+    if (!department || !code || !name || !description) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate code
+    if (!validator.isAlphanumeric(code)) {
+      return res.status(400).json({ message: 'Invalid code' });
+    }
+
+    // Validate department
+    if (!validator.isAlpha(department)) {
+      return res.status(400).json({ message: 'Invalid department' });
+    }
+
+    // Validate name
+    if (!validator.isAlpha(name)) {
+      return res.status(400).json({ message: 'Invalid name' });
+    }
+
+    // Validate description
+    if (!validator.isAlpha(description)) {
+      return res.status(400).json({ message: 'Invalid description' });
+    }
+
+    // Validate if course already exists
+    const courseExists = await db.collection('courses').findOne({ code });
+    if (courseExists) {
+      return res.status(400).json({ message: 'Course already exists' });
+    }
+
 
     const course = {
       department,
       code,
       name,
       description,
-      credit_hours,
-      prerequisites
     };
 
     const response = await db.collection('courses').insertOne(course);
@@ -74,44 +102,66 @@ const createCourse = async (req, res) => {
 };
 
 const updateCourse = async (req, res) => {
-  //#swagger.tags=['Courses'];
-  try {
-    const db = mongodb.getDb();
-    if (!ObjectId.isValid(req.params.id)) {
-      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
-    }
-    // Destructure trim and sanitize required fields
-    let { department, code, name, description, credit_hours, prerequisites } = req.body;
-    department =department;
-    code =code;
-    name =name;
-    description =description;
-    credit_hours =credit_hours;
-    prerequisites =prerequisites
+ //#swagger.tags=['Courses'];
+ try {
+  const db = mongodb.getDb();
+  
+  // Destructure trim and sanitize required fields
+  let { department, code, name, description } = req.body;
+  department = validator.trim(department);
+  code = validator.trim(code);
+  name = validator.trim(name);
+  description = validator.trim(description);
 
-
-
-    const course = {
-      department,
-      code,
-      name,
-      description,
-      credit_hours,
-      prerequisites
-    };
-
-    const response = await db.collection('courses').updateOne({ _id: new ObjectId(req.params.id) }, { $set: course });
-
-    if (response.acknowledged) {
-      res.status(201).json({ message: 'Course updated successfully' });
-    }
-    
-  } catch (err) {
-    res.status(400).json({ 
-      message: 'Error occurred', 
-      error: err.message,
-    });
+  if (!department || !code || !name || !description) {
+    return res.status(400).json({ message: 'Missing required fields' });
   }
+
+  // Validate code
+  if (!validator.isAlphanumeric(code)) {
+    return res.status(400).json({ message: 'Invalid code' });
+  }
+
+  // Validate department
+  if (!validator.isAlpha(department)) {
+    return res.status(400).json({ message: 'Invalid department' });
+  }
+
+  // Validate name
+  if (!validator.isAlpha(name)) {
+    return res.status(400).json({ message: 'Invalid name' });
+  }
+
+  // Validate description
+  if (!validator.isAlpha(description)) {
+    return res.status(400).json({ message: 'Invalid description' });
+  }
+
+  // Validate if course already exists
+  const courseExists = await db.collection('courses').findOne({ code });
+  if (courseExists) {
+    return res.status(400).json({ message: 'Course already exists' });
+  }
+
+  const course = {
+    department,
+    code,
+    name,
+    description,
+  };
+
+  const response = await db.collection('courses').updateOne({ _id: new ObjectId(req.params.id) }, { $set: course });
+
+  if (response.acknowledged) {
+    res.status(201).json({ message: 'Course updated successfully' });
+  }
+  
+} catch (err) {
+  res.status(400).json({ 
+    message: 'Error occurred', 
+    error: err.message,
+  });
+}
 }
 
 const deleteCourse = async (req, res) => {

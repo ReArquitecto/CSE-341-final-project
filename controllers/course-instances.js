@@ -1,5 +1,6 @@
 const mongodb = require('../db/connect.js');
 const ObjectId = require('mongodb').ObjectId;
+const validator = require('validator');
 
 const getAllCourseInstances = async (req, res) => {
   //#swagger.tags=['Course-Instances'];
@@ -42,15 +43,41 @@ const createCourseInstance = async (req, res) => {
     const db = mongodb.getDb();
     
 
+    // Destructure trim and sanitize required fields
     let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
-    courseId =courseId;
-    teacherId =teacherId;
-    semester =semester;
-    year =year;
-    location =location;
-    time =time;
-    schedule =schedule;
-    maxStudentCount =maxStudentCount;
+    courseId = validator.trim(courseId);
+    teacherId = validator.trim(teacherId);
+    semester = validator.trim(semester);
+    year = validator.trim(year);
+    location = validator.trim(location);
+    time = validator.trim(time);
+    schedule = validator.trim(schedule);
+    maxStudentCount = validator.trim(maxStudentCount);
+
+
+    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate code
+    if (!validator.isAlphanumeric(courseId)) {
+      return res.status(400).json({ message: 'Invalid code' });
+    }
+
+    // Validate department
+    if (!validator.isAlphanumeric(teacherId)) {
+      return res.status(400).json({ message: 'Invalid department' });
+    }
+
+    // Validate year
+    if (!validator.isNumeric(year)) {
+      return res.status(400).json({ message: 'Invalid year' });
+    }
+
+    // Validate maxStudentCount
+    if (!validator.isNumeric(maxStudentCount)) {
+      return res.status(400).json({ message: 'Invalid maxStudentCount' });
+    }
 
 
     const courseInstance = {
@@ -88,15 +115,40 @@ const updateCourseInstance = async (req, res) => {
     const courseInstanceId = new ObjectId(req.params.id);
 
 
+    // Destructure trim and sanitize required fields
     let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
-    courseId =courseId;
-    teacherId =teacherId;
-    semester =semester;
-    year =year;
-    location =location;
-    time =time;
-    schedule =schedule;
-    maxStudentCount =maxStudentCount;
+    courseId = validator.trim(courseId);
+    teacherId = validator.trim(teacherId);
+    semester = validator.trim(semester);
+    year = validator.trim(year);
+    location = validator.trim(location);
+    time = validator.trim(time);
+    schedule = validator.trim(schedule);
+    maxStudentCount = validator.trim(maxStudentCount);
+
+    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Validate code
+    if (!validator.isAlphanumeric(courseId)) {
+      return res.status(400).json({ message: 'Invalid code' });
+    }
+
+    // Validate department
+    if (!validator.isAlphanumeric(teacherId)) {
+      return res.status(400).json({ message: 'Invalid department' });
+    }
+
+    // Validate year
+    if (!validator.isNumeric(year)) {
+      return res.status(400).json({ message: 'Invalid year' });
+    }
+
+    // Validate maxStudentCount
+    if (!validator.isNumeric(maxStudentCount)) {
+      return res.status(400).json({ message: 'Invalid maxStudentCount' });
+    }
 
 
     const courseInstance = {
