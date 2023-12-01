@@ -25,15 +25,18 @@ const saveCourse = (req, res, next) => {
   });
 };
 
+
+
+
 const saveCourseInstance = (req, res, next) => {
   const validationRule = {
-    
     courseId: 'required|integer',
     teacherId: 'required|string', 
     semester:'required|string',
-    year:'required|integer',
+    year: 'required|integer|digits:4',
     location:'required|string',
-    time: 'required |string', 
+    startTime:'required|string',
+    endTime:'required|string',
     schedule:'required|string',
     maxStudentCount:'required|integer',
 
