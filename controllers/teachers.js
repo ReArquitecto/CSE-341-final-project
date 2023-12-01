@@ -69,7 +69,7 @@ const createTeacher = async (req, res) => {
 
     // Validate birthday
     if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday' });
+      return res.status(400).json({ message: 'Invalid birthday. Should be in YYYY-MM-DD format.' });
     }
 
     // Check if teacher already exists
