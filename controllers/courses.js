@@ -43,7 +43,7 @@ const createCourse = async (req, res) => {
     const db = mongodb.getDb();
     
     // Destructure trim and sanitize required fields
-    let { department, code, name, description } = req.body;
+    let { department, code, name, description, creditHours, prerequisites } = req.body;
     department = validator.trim(department);
     code = validator.trim(code);
     name = validator.trim(name);
@@ -75,7 +75,6 @@ const createCourse = async (req, res) => {
       return res.status(400).json({ message: 'Invalid description' });
     }
 
-    
     // Validate creditHours 
     if (!validator.isInteger(creditHours)) {
       return res.status(400).json({ message: 'Invalid credit hours' });
@@ -98,6 +97,8 @@ const createCourse = async (req, res) => {
       code,
       name,
       description,
+      creditHours,
+      prerequisites
     };
 
     const response = await db.collection('courses').insertOne(course);
@@ -123,14 +124,15 @@ const updateCourse = async (req, res) => {
       res.status(400).json('Must use a valid userinfo id to update a userinfo.');
     }
     
-    // Destructure trim and sanitize required fields
-    let { department, code, name, description } = req.body;
+    let { department, code, name, description, creditHours, prerequisites } = req.body;
     department = validator.trim(department);
     code = validator.trim(code);
     name = validator.trim(name);
     description = validator.trim(description);
+    creditHours = validator.trim(validator);
+    prerequisites = validator.trim(prerequisites);
 
-    if (!department || !code || !name || !description) {
+    if (!department || !code || !name || !description || !creditHours || !prerequisites) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -154,6 +156,17 @@ const updateCourse = async (req, res) => {
       return res.status(400).json({ message: 'Invalid description' });
     }
 
+    // Validate creditHours 
+    if (!validator.isInteger(creditHours)) {
+      return res.status(400).json({ message: 'Invalid credit hours' });
+    }
+
+    // Validate prerequites
+    if (!validator.isAlpha(prerequisites)) {
+      return res.status(400).json({ message: 'Invalid prereqs' });
+    }
+
+
     // Validate if course already exists
     const courseExists = await db.collection('courses').findOne({ code });
     if (courseExists) {
@@ -165,6 +178,8 @@ const updateCourse = async (req, res) => {
       code,
       name,
       description,
+      creditHours,
+      prerequisites
     };
 
     const response = await db.collection('courses').updateOne({ _id: new ObjectId(req.params.id) }, { $set: course });
