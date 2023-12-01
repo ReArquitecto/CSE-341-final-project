@@ -84,6 +84,9 @@ const updateEnrollment = async (req, res) => {
   //#swagger.tags=['Enrollments'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const enrollmentId = new ObjectId(req.params.id);
     const { courseInstanceId, studentId } = req.body;
     const updateEnrollment = {};

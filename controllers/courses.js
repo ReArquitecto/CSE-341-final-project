@@ -43,13 +43,15 @@ const createCourse = async (req, res) => {
     const db = mongodb.getDb();
     
     // Destructure trim and sanitize required fields
-    let { department, code, name, description } = req.body;
+    let { department, code, name, description, creditHours, prerequisites } = req.body;
     department = validator.trim(department);
     code = validator.trim(code);
     name = validator.trim(name);
     description = validator.trim(description);
+    creditHours = validator.trim(creditHours);
+    prerequisites = validator.trim(prerequisites);
 
-    if (!department || !code || !name || !description) {
+    if (!department || !code || !name || !description || !creditHours || !prerequisites) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -64,14 +66,26 @@ const createCourse = async (req, res) => {
     }
 
     // Validate name
-    if (!validator.isAlpha(name)) {
+    if (typeof name !== 'string') {
       return res.status(400).json({ message: 'Invalid name' });
     }
 
     // Validate description
-    if (!validator.isAlpha(description)) {
+    if (typeof description !== 'string') {
       return res.status(400).json({ message: 'Invalid description' });
     }
+
+        creditHours = parseInt(creditHours, 10); // Convert string to integer
+    if (!validator.isInt(String(creditHours))) {
+      return res.status(400).json({ message: 'Invalid credit hours' });
+    }
+
+
+    // Validate prerequites
+    if (typeof prerequisites !== 'string') {
+      return res.status(400).json({ message: 'Invalid prereqs' });
+    }
+
 
     // Validate if course already exists
     const courseExists = await db.collection('courses').findOne({ code });
@@ -84,6 +98,8 @@ const createCourse = async (req, res) => {
       code,
       name,
       description,
+      creditHours,
+      prerequisites
     };
 
     const response = await db.collection('courses').insertOne(course);
@@ -104,18 +120,23 @@ const updateCourse = async (req, res) => {
   //#swagger.tags=['Courses'];
   try {
     const db = mongodb.getDb();
+
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     
-    // Destructure trim and sanitize required fields
-    let { department, code, name, description } = req.body;
+    let { department, code, name, description, creditHours, prerequisites } = req.body;
     department = validator.trim(department);
     code = validator.trim(code);
     name = validator.trim(name);
     description = validator.trim(description);
+    prerequisites = validator.trim(prerequisites);
 
-    if (!department || !code || !name || !description) {
+    if (!department || !code || !name || !description || !creditHours || !prerequisites) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
+    
     // Validate code
     if (!validator.isAlphanumeric(code)) {
       return res.status(400).json({ message: 'Invalid code' });
@@ -127,13 +148,24 @@ const updateCourse = async (req, res) => {
     }
 
     // Validate name
-    if (!validator.isAlpha(name)) {
+    if (typeof name !== 'string') {
       return res.status(400).json({ message: 'Invalid name' });
     }
 
     // Validate description
-    if (!validator.isAlpha(description)) {
+    if (typeof description !== 'string') {
       return res.status(400).json({ message: 'Invalid description' });
+    }
+
+        creditHours = parseInt(creditHours, 10); // Convert string to integer
+    if (!validator.isInt(String(creditHours))) {
+      return res.status(400).json({ message: 'Invalid credit hours' });
+    }
+
+
+    // Validate prerequites
+    if (typeof prerequisites !== 'string') {
+      return res.status(400).json({ message: 'Invalid prereqs' });
     }
 
     // Validate if course already exists
@@ -147,6 +179,8 @@ const updateCourse = async (req, res) => {
       code,
       name,
       description,
+      creditHours,
+      prerequisites
     };
 
     const response = await db.collection('courses').updateOne({ _id: new ObjectId(req.params.id) }, { $set: course });

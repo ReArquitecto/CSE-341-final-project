@@ -69,7 +69,7 @@ const createTeacher = async (req, res) => {
 
     // Validate birthday
     if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday' });
+      return res.status(400).json({ message: 'Invalid birthday. Should be in YYYY-MM-DD format.' });
     }
 
     // Check if teacher already exists
@@ -97,6 +97,9 @@ const updateTeacher = async (req, res) => {
   //#swagger.tags=['Teachers'];
   try {
     const db = mongodb.getDb();
+    if (!ObjectId.isValid(req.params.id)) {
+      res.status(400).json('Must use a valid userinfo id to update a userinfo.');
+    }
     const teacherId = new ObjectId(req.params.id);
 
     // Destructure and trim & sanitize required fields
