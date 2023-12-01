@@ -48,8 +48,10 @@ const createCourse = async (req, res) => {
     code = validator.trim(code);
     name = validator.trim(name);
     description = validator.trim(description);
+    creditHours = validator.trim(validator);
+    prerequisites = validator.trim(prerequisites);
 
-    if (!department || !code || !name || !description) {
+    if (!department || !code || !name || !description || !creditHours || !prerequisites) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -72,6 +74,18 @@ const createCourse = async (req, res) => {
     if (!validator.isAlpha(description)) {
       return res.status(400).json({ message: 'Invalid description' });
     }
+
+    
+    // Validate creditHours 
+    if (!validator.isInteger(creditHours)) {
+      return res.status(400).json({ message: 'Invalid credit hours' });
+    }
+
+    // Validate prerequites
+    if (!validator.isAlpha(prerequisites)) {
+      return res.status(400).json({ message: 'Invalid prereqs' });
+    }
+
 
     // Validate if course already exists
     const courseExists = await db.collection('courses').findOne({ code });

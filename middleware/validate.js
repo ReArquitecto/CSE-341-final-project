@@ -6,7 +6,7 @@ const saveCourse = (req, res, next) => {
     code: 'required|integer',
     name: 'required|string',
     description: 'required|string', 
-    credit_hours: 'required|integer',
+    creditHours: 'required|integer',
     prerequisites: 'required|string',
    
   };
