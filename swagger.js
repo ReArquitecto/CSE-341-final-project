@@ -6,8 +6,8 @@ const doc = {
     title: 'Student Enrollment API',
     description: 'API Documentation for Student Enrollment API',
   },
-  host: 'enrollment-system-0o9t.onrender.com',
-  schemes: ['https'],
+  host: 'localhost:8080',
+  schemes: ['http' , 'https'],
   tags: [
     { name: 'Teachers', description: 'Operations related to Teachers' },
     { name: 'Courses', description: 'Operations related to Courses' },

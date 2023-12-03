@@ -45,17 +45,18 @@ const createCourseInstance = async (req, res) => {
     const db = mongodb.getDb();
     
     // Destructure trim and sanitize required fields
-    let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
+    let { courseId, teacherId, semester, year, location, startTime, endTime, schedule, maxStudentCount } = req.body;
     courseId = validator.trim(courseId);
     teacherId = validator.trim(teacherId);
     semester = validator.trim(semester);
     year = validator.trim(year);
     location = validator.trim(location);
-    time = validator.trim(time);
+    startTime = validator.trim(startTime);
+    endTime = validator.trim(endTime);
     schedule = validator.trim(schedule);
     maxStudentCount = validator.trim(maxStudentCount);
 
-    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
+    if (!courseId || !teacherId || !semester || !year || !location || !startTime || !endTime || !schedule || !maxStudentCount) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -69,11 +70,36 @@ const createCourseInstance = async (req, res) => {
       return res.status(400).json({ message: 'Invalid department' });
     }
 
+    //Validate semester
+    if (typeof semester !== 'string') {
+      return res.status(400).json({ message: 'Invalid semester' });
+    }
+
     // Validate year
-    if (!validator.isNumeric(year)) {
+    if (!validator.isAlphanumeric(year)) {
       return res.status(400).json({ message: 'Invalid year' });
     }
 
+    
+  
+     //Validate location
+     if (typeof location !== 'string') {
+      return res.status(400).json({ message: 'Invalid location' });
+
+    }
+      //Validate startTime
+      if (typeof startTime !== 'string') {
+        return res.status(400).json({ message: 'Invalid startTime' });
+  
+      }
+     //Validate schedule
+     if (typeof schedule !== 'string') {
+      return res.status(400).json({ message: 'Invalid schedule' });
+
+    }
+    
+  
+ 
     // Validate maxStudentCount
     if (!validator.isNumeric(maxStudentCount)) {
       return res.status(400).json({ message: 'Invalid maxStudentCount' });
@@ -85,7 +111,7 @@ const createCourseInstance = async (req, res) => {
       semester,
       year,
       location,
-      time,
+      startTime,
       schedule,
       maxStudentCount,
     };
@@ -112,22 +138,26 @@ const updateCourseInstance = async (req, res) => {
       res.status(400).json('Must use a valid userinfo id to update a userinfo.');
     }
     const courseInstanceId = new ObjectId(req.params.id);
+  
 
-    // Destructure trim and sanitize required fields
-    let { courseId, teacherId, semester, year, location, time, schedule, maxStudentCount } = req.body;
+
+   
+    let { courseId, teacherId, semester, year, location, startTime, endTime, schedule, maxStudentCount } = req.body;
     courseId = validator.trim(courseId);
     teacherId = validator.trim(teacherId);
     semester = validator.trim(semester);
     year = validator.trim(year);
     location = validator.trim(location);
-    time = validator.trim(time);
+    startTime = validator.trim(startTime);
+    endTime = validator.trim(endTime);
     schedule = validator.trim(schedule);
     maxStudentCount = validator.trim(maxStudentCount);
 
-    if (!courseId || !teacherId || !semester || !year || !location || !time || !schedule || !maxStudentCount) {
+    if (!courseId || !teacherId || !semester || !year || !location || !startTime || !endTime || !schedule || !maxStudentCount) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
+    
     // Validate code
     if (!validator.isAlphanumeric(courseId)) {
       return res.status(400).json({ message: 'Invalid code' });
@@ -138,11 +168,34 @@ const updateCourseInstance = async (req, res) => {
       return res.status(400).json({ message: 'Invalid department' });
     }
 
-    // Validate year
-    if (!validator.isNumeric(year)) {
+    //Validate semester
+    if (typeof semester !== 'string') {
+      return res.status(400).json({ message: 'Invalid semester' });
+    }
+
+    if (!validator.isAlphanumeric(year)) {
       return res.status(400).json({ message: 'Invalid year' });
     }
 
+  
+     //Validate location
+     if (typeof location !== 'string') {
+      return res.status(400).json({ message: 'Invalid location' });
+
+    }
+      //Validate startTime
+      if (typeof startTime !== 'string') {
+        return res.status(400).json({ message: 'Invalid startTime' });
+  
+      }
+     //Validate schedule
+     if (typeof schedule !== 'string') {
+      return res.status(400).json({ message: 'Invalid schedule' });
+
+    }
+    
+  
+ 
     // Validate maxStudentCount
     if (!validator.isNumeric(maxStudentCount)) {
       return res.status(400).json({ message: 'Invalid maxStudentCount' });
@@ -154,7 +207,7 @@ const updateCourseInstance = async (req, res) => {
       semester,
       year,
       location,
-      time,
+      startTime,
       schedule,
       maxStudentCount,
     };
