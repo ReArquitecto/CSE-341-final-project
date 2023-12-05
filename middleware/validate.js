@@ -77,8 +77,6 @@ const saveEnrollment = (req, res, next) => {
 
 const saveStudent = (req, res, next) => {
   const validationRule = {
-   courseInstanceId: 'required|integer',
-   studentId:'required|integer',
    firstName:'required|string', 
    lastName:'required|string', 
    email: 'required|email', 
