@@ -1,5 +1,7 @@
 const validator = new require('../helpers/validate');
 
+
+
 const saveCourse = (req, res, next) => {
   const validationRule = {
     department: 'required|string',
@@ -27,21 +29,19 @@ const saveCourse = (req, res, next) => {
 
 
 
-
 const saveCourseInstance = (req, res, next) => {
   const validationRule = {
     courseId: 'required|integer',
     teacherId: 'required|string', 
-    semester:'required|string',
+    semester: 'required|string',
     year: 'required|integer|digits:4',
-    location:'required|string',
-    startTime:'required|string',
-    endTime:'required|string',
-    schedule:'required|string',
-    maxStudentCount:'required|integer',
-
+    location: 'required|string',
+    startTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/'],
+    endTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/'],
+    schedule: 'required|string',
+    maxStudentCount: 'required|integer',
   };
-  
+
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
       res.status(412).send({
@@ -54,6 +54,9 @@ const saveCourseInstance = (req, res, next) => {
     }
   });
 };
+
+
+
 
 const saveEnrollment = (req, res, next) => {
   const validationRule = {
