@@ -10,9 +10,11 @@ Check out the site for this project at https://enrollment-system-0o9t.onrender.c
 - open http://localhost:8080
 
 ## Before pushing to github:
+- write and run Jest unit tests (use "npm run test")
 - remove default swagger paths to clean up the swagger docs
 - change swagger.js to point to the render url and the schema to https
 - node swagger.js
+- npm run test
 - npm run lint
 - npm run prettier
 
