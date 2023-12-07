@@ -36,8 +36,8 @@ const saveCourseInstance = (req, res, next) => {
     semester: 'required|string',
     year: 'required|integer|digits:4',
     location: 'required|string',
-    startTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/'],
-    endTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/'],
+    startTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9] (AM|PM)?$/'],
+    endTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9] (AM|PM)?$/'],
     schedule: 'required|string',
     maxStudentCount: 'required|integer',
   };

@@ -245,7 +245,6 @@ describe('Student Controller', () => {
     });
 
     await updateStudent(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
   });
 

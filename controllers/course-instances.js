@@ -112,6 +112,7 @@ const createCourseInstance = async (req, res) => {
       year,
       location,
       startTime,
+      endTime,
       schedule,
       maxStudentCount,
     };
@@ -165,7 +166,7 @@ const updateCourseInstance = async (req, res) => {
 
     // Validate department
     if (!validator.isAlphanumeric(teacherId)) {
-      return res.status(400).json({ message: 'Invalid department' });
+      return res.status(400).json({ message: 'Invalid Teacher' });
     }
 
     //Validate semester
@@ -208,6 +209,7 @@ const updateCourseInstance = async (req, res) => {
       year,
       location,
       startTime,
+      endTime,
       schedule,
       maxStudentCount,
     };
