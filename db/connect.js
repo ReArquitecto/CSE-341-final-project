@@ -27,7 +27,15 @@ const getDb = () => {
   return _db;
 };
 
+const closeDB = () => {
+  if (_db) {
+    _db.close(); // closes the database connection
+    _db = null; // resets the _db variable
+  }
+};
+
 module.exports = {
   initDb,
   getDb,
-}; 
+  closeDB,
+};
