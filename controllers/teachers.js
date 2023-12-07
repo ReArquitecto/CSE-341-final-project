@@ -52,24 +52,13 @@ const createTeacher = async (req, res) => {
     phoneNumber = validator.trim(phoneNumber);
     subject = validator.trim(subject);
 
-    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber || !subject) {
+    if (!firstName || !lastName || !email || !address || !phoneNumber || !subject) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
     // Validate email
     if (!validator.isEmail(email)) {
       return res.status(400).json({ message: 'Invalid email' });
-    }
-
-    // Validate gender
-    const validGenders = ['Male', 'Female', 'Non-Binary', 'Other'];
-    if (!validGenders.includes(gender)) {
-      return res.status(400).json({ message: 'Invalid gender' });
-    }
-
-    // Validate birthday
-    if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday. Should be in YYYY-MM-DD format.' });
     }
 
     // Check if teacher already exists
@@ -81,7 +70,7 @@ const createTeacher = async (req, res) => {
     }
 
     // Create new teacher
-    const teacher = { firstName, lastName, email, birthday, gender, address, phoneNumber, subject };
+    const teacher = { firstName, lastName, email, address, phoneNumber, subject };
     const response = await db.collection('teachers').insertOne(teacher);
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(response);
@@ -103,7 +92,7 @@ const updateTeacher = async (req, res) => {
     const teacherId = new ObjectId(req.params.id);
 
     // Destructure and trim & sanitize required fields
-    let { firstName, lastName, email, birthday, gender, address, phoneNumber, subject } = req.body;
+    let { firstName, lastName, email, address, phoneNumber, subject } = req.body;
 
     firstName = validator.trim(firstName);
     lastName = validator.trim(lastName);
@@ -112,7 +101,7 @@ const updateTeacher = async (req, res) => {
     phoneNumber = validator.trim(phoneNumber);
     subject = validator.trim(subject);
 
-    if (!firstName || !lastName || !email || !birthday || !gender || !address || !phoneNumber || !subject) {
+    if (!firstName || !lastName || !email || !address || !phoneNumber || !subject) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -121,19 +110,8 @@ const updateTeacher = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email' });
     }
 
-    // Validate gender
-    const validGenders = ['Male', 'Female', 'Non-Binary', 'Other'];
-    if (!validGenders.includes(gender)) {
-      return res.status(400).json({ message: 'Invalid gender' });
-    }
-
-    // Validate birthday
-    if (!validator.isISO8601(birthday) || new Date(birthday) > new Date()) {
-      return res.status(400).json({ message: 'Invalid birthday' });
-    }
-
     // Update teacher
-    const teacher = {firstName, lastName, email, birthday, gender, address, phoneNumber, subject};
+    const teacher = {firstName, lastName, email, address, phoneNumber, subject};
     const response = await db.collection('teachers').updateOne(
       { _id: teacherId },
       { $set: teacher },
