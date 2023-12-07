@@ -54,7 +54,7 @@ let res = {
 
 let mongoServer;
 
-// ALL TESTS FOR THE students.js CONTROLLER ✏️
+// ALL TESTS FOR THE students.js CONTROLLER
 describe('Student Controller', () => {
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
@@ -74,6 +74,7 @@ describe('Student Controller', () => {
 
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR getAllStudents
+  // ✏️ Successful getAllStudents
   test('getAllStudents should retrieve students and return status 200', async () => {
     // Mock the chaining of find().toArray()
     const mockToArray = jest.fn().mockResolvedValue(mockStudentsData);
@@ -96,6 +97,7 @@ describe('Student Controller', () => {
     expect(res.json).toHaveBeenCalledWith(mockStudentsData);
   });
 
+  // ✏️ getAllStudents error handling
   test('getAllStudents should return status 400 if error occurs', async () => {
     const mockToArray = jest.fn().mockRejectedValue(new Error('Mock error'));
     const mockFind = jest.fn().mockReturnThis();
@@ -114,6 +116,7 @@ describe('Student Controller', () => {
   
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR getSingleStudent
+  // ✏️ Successful getSingleStudent
   test('getSingleStudent should retrieve a student and return status 200', async () => {
     // Mock the findOne call
     const mockFindOne = jest.fn().mockResolvedValue(mockStudentsData[0]);
@@ -127,7 +130,7 @@ describe('Student Controller', () => {
     expect(res.json).toHaveBeenCalledWith(mockStudentsData[0]);
   });
 
-  // Test for getSingleStudent error handling
+  // ✏️ getSingleStudent error handling
   test('getSingleStudent should return status 400 if error occurs', async () => {
     // Mock findOne to reject
     const mockFindOne = jest.fn().mockRejectedValue(new Error('Mock error'));
@@ -141,6 +144,7 @@ describe('Student Controller', () => {
 
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR createStudent
+  // ✏️ Successful createStudent
   test('should create a student and return 200 status', async () => {
     const req = {
       body: {
@@ -167,7 +171,7 @@ describe('Student Controller', () => {
     expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
   });
 
-  // Missing required fields
+  // ✏️ Missing required fields
   test('should return 400 status if required fields are missing', async () => {
     const req = {
       body: {
@@ -189,7 +193,7 @@ describe('Student Controller', () => {
     expect(res.status).toHaveBeenCalledWith(500);
   });
 
-  // Student already exists
+  // ✏️ Student already exists
   test('should return 400 status if student already exists', async () => {
     const req = {
       body: {
@@ -218,7 +222,7 @@ describe('Student Controller', () => {
   
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR updateStudent
-  // Successful update
+  // ✏️ Successful updateStudent
   test('should update a student and return 200 status', async () => {
     const req = {
       params: { id: mockStudentsData[0]._id.toString() },
@@ -247,7 +251,7 @@ describe('Student Controller', () => {
 
 // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
 // TESTS FOR deleteStudent
-  // Successful deletion
+  // ✏️ Successful deleteStudent
   test('should delete a student and return 200 status', async () => {
     const req = {
       params: { id: mockStudentsData[0]._id.toString() }
@@ -265,6 +269,8 @@ describe('Student Controller', () => {
     expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
   });
 
+
+  // Tests are finished. Close the connections.
   afterAll(async () => {
     await mongodb.closeDB();
     if (mongoServer) {
