@@ -77,8 +77,6 @@ const saveEnrollment = (req, res, next) => {
 
 const saveStudent = (req, res, next) => {
   const validationRule = {
-   courseInstanceId: 'required|integer',
-   studentId:'required|integer',
    firstName:'required|string', 
    lastName:'required|string', 
    email: 'required|email', 
@@ -86,7 +84,6 @@ const saveStudent = (req, res, next) => {
    gender:'required|string',
    address:'required|string', 
    phoneNumber:'required|integer'
-
   };
   
   validator(req.body, validationRule, {}, (err, status) => {
