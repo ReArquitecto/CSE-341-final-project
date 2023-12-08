@@ -96,7 +96,7 @@ const {
       expect(res.json).toHaveBeenCalledWith(mockCoursesData);
     });
   
-    // ✏️ getAllCourses error handling
+    //  getAllCourses error handling
     test('getAllCourses should return status 400 if error occurs', async () => {
       const mockToArray = jest.fn().mockRejectedValue(new Error('Mock error'));
       const mockFind = jest.fn().mockReturnThis();
@@ -113,7 +113,7 @@ const {
     });
   
     // TESTS FOR getSingleCourse
-    // ✏️ Successful getSingleCourse
+    //  Successful getSingleCourse
     test('getSingleCourse should retrieve a course and return status 200', async () => {
       const mockFindOne = jest.fn().mockResolvedValue(mockCoursesData[0]);
       mongodb.getDb = jest.fn().mockReturnValue({
@@ -213,7 +213,7 @@ const {
   
   
   // TESTS FOR updateCourse
-  // NOT WORKING YET
+  
   test('should update a course and return 201 status', async () => {
     const req = {
       params: { id: mockCoursesData[0]._id.toString() },
