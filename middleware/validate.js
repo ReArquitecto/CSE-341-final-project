@@ -57,8 +57,8 @@ const saveCourseInstance = (req, res, next) => {
 
 const saveEnrollment = (req, res, next) => {
   const validationRule = {
-   courseInstanceId: 'required|integer',
-   studentId :'required|integer',
+   courseInstanceId: 'required|string',
+   studentId :'required|string',
 
   };
   

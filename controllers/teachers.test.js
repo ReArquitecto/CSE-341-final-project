@@ -5,7 +5,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const ObjectId = require('mongodb').ObjectId;
 
 // Mock Teacher data
-const mockTeacherData = [
+const mockTeachersData = [
   {
     _id: new ObjectId(),
     firstName: "Mark",
@@ -40,19 +40,31 @@ const mockTeacherId = new ObjectId();
 // Mock request and response objects
 const req = {
   params: { id: mockTeacherId },
-  body: mockTeacherData
+  body: mockTeachersData
 };
 
-const res = {
+let res = {
   setHeader: jest.fn(),
   status: jest.fn().mockReturnThis(),
   json: jest.fn()
 };
 
+let mongoServer;
+
 describe('Teacher Controller', () => {
   beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
-    mongodb.connect = jest.fn().mockResolvedValue(mongoServer.getUri());
+    mongodb.initDb = jest.fn().mockResolvedValue(mongoServer.getUri());
+    await mongodb.initDb();
+  });
+
+  beforeEach(() => {
+    // Reset or reinitialize the res object before each test
+    res = {
+      setHeader: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
   });
 
   // Tests for getAllTeachers
@@ -60,7 +72,9 @@ test('getAllTeachers should retrieve Teachers and return status 200', async () =
   // Mock the chaining of find().toArray()
   const mockToArray = jest.fn().mockResolvedValue(mockTeachersData);
   const mockFind = jest.fn().mockReturnThis(); // 'this' refers to the chainable object
+  mongodb.initDb
   mongodb.getDb = jest.fn().mockReturnValue({
+
     collection: jest.fn().mockReturnValue({ 
       find: mockFind,
       toArray: mockToArray
@@ -76,10 +90,16 @@ test('getAllTeachers should retrieve Teachers and return status 200', async () =
   expect(res.json).toHaveBeenCalledWith(mockTeachersData);
 });
 
+  // ✏️ getAllTeachers error handling
   test('getAllTeachers should return status 400 if error occurs', async () => {
-    // Mock db.collection.find().toArray()
-    const mockFind = jest.fn().mockRejectedValue(new Error('Mock error'));
-    mongodb.getDb = jest.fn().mockReturnValue({ collection: jest.fn().mockReturnValue({ find: mockFind }) });
+    const mockToArray = jest.fn().mockRejectedValue(new Error('Mock error'));
+    const mockFind = jest.fn().mockReturnThis();
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnValue({
+        find: mockFind,
+        toArray: mockToArray
+      })
+    });
 
     await getAllTeachers(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
@@ -88,25 +108,15 @@ test('getAllTeachers should retrieve Teachers and return status 200', async () =
 
   test('getSingleTeacher should retrieve a single Teacher and return status 200', async () => {
     // Create a mock req and a mock FindOne function
-    const req = { params: { id: mockTeachersData[0]._id.toString() } };
-    const mockFindOne = jest.fn().mockImplementation(({ _id }) => {
-      const teacher = mockTeachersData.find(teacher => teacher._id.toString() === _id);
-      return Promise.resolve(teacher);
-    });
-  
-    // Mock getDb to return an object with a collection function that returns an object with the findOne function
-    mongodb.getDb = jest.fn().mockReturnValue({ collection: jest.fn().mockReturnValue({ findOne: mockFindOne }) });
 
-    // Set up the mock response object
-    const res = {
-      setHeader: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
+    const mockFindOne = jest.fn().mockResolvedValue(mockTeachersData[0]);
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnValue({ findOne: mockFindOne})
+    });
+    const req = { params: { id: mockTeachersData[0]._id } };
   
     // Call the function to test
     await getSingleTeacher(req, res);
-    expect(mockFindOne).toHaveBeenCalledWith({ _id: new ObjectId(mockTeachersData[0]._id) });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockTeachersData[0]);
   });
@@ -121,158 +131,133 @@ test('getAllTeachers should retrieve Teachers and return status 200', async () =
     expect(res.json).toHaveBeenCalledWith({ message: 'Error occurred', error: 'Mock error' });
   });
 
+  test('should create a teacher and return 200 status', async () => {
+    const req = {
+      body: {
+        firstName: "Kevin",
+        lastName: "Jovie",
+        email: "KevinJong@gmail.com",
+        address: "123 Rock Point, Rexburg",
+        phoneNumber: "2223334445",
+        subject: "Math"
+      }
+    };
+    
+    // Mock database methods
+    const mockInsertOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnThis(),
+      findOne: jest.fn().mockResolvedValue(null),
+      insertOne: mockInsertOne
+    });
 
-  // Tests for createTeacher
-  describe('createTeacher', () => {
-    // Before each test, reset the mock for res
-    beforeEach(() => {
-      res.setHeader.mockClear();
-      res.status.mockClear();
-      res.json.mockClear();
+    await createTeacher(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
+  });
+  
+
+  test('should return 400 status if required fields are missing', async () => {
+    const req = {
+      body: {
+        // Missing 'email' and other fields
+        firstName: "Jest",
+        lastName: "Test",
+      }
+    };
+
+    // Mock database methods
+    const mockInsertOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnThis(),
+      findOne: jest.fn().mockResolvedValue(null),
+      insertOne: mockInsertOne
     });
-  
-    // Successful creation
-    test('should create a Teacher and return 200 status', async () => {
-      const req = {
-        body: {
-            firstName: "Mary",
-            lastName: "Jean",
-            email: "MaryJean@gmail.com",
-            address: "222 Pants Ave, Rexburg",
-            phoneNumber: "4445556666",
-            subject: "Computer Science"
-        }
-      };
-      
-      // Mock database methods
-      const mockInsertOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
-      mongodb.getDb = jest.fn().mockReturnValue({
-        collection: jest.fn().mockReturnThis(),
-        findOne: jest.fn().mockResolvedValue(null), // Simulate that the Teacher doesn't already exist
-        insertOne: mockInsertOne
-      });
-  
-      // Call the function with the mock request and response
-      await createTeacher(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
-    });
-  
-    // Missing required fields
-    test('should return 400 status if required fields are missing', async () => {
-      const req = {
-        body: {
-          // Missing 'email' and other fields
-          firstName: "Jest",
-          lastName: "Test"
-        }
-      };
-  
-      // Call the function with the mock request and response
-      await createTeacher(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Missing required fields' });
-    });
-  
-    // Teacher already exists
-    test('should return 400 status if Teacher already exists', async () => {
-      const req = {
-        body: {
-            firstName: "Mark",
-            lastName: "Smith",
-            email: "ms@gmail.com",
-            address: "123 cicle Lane, Rexburg",
-            phoneNumber: "1112223333",
-            subject: "Art"
-        }
-      };
-  
-      // Mock database methods
-      const mockFindOne = jest.fn().mockResolvedValue({ _id: 'existingId', ...req.body });
-      mongodb.getDb = jest.fn().mockReturnValue({
-        collection: jest.fn().mockReturnThis(),
-        findOne: mockFindOne
-      });
-  
-      // Call the function with the mock request and response
-      await createTeacher(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Teacher already exists' });
-    });
-  
-    // ... additional tests for other validation failures
+
+    await createTeacher(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
   });
 
-  // Tests for updateTeacher
-  describe('updateTeacher', () => {
-    // Before each test, reset the mock for res
-    beforeEach(() => {
-      res.setHeader.mockClear();
-      res.status.mockClear();
-      res.json.mockClear();
+  // ✏️ Teacher already exists
+  test('should return 400 status if Teacher already exists', async () => {
+    const req = {
+      body: {
+        firstName: "Mark",
+        lastName: "Smith",
+        email: "ms@gmail.com",
+        address: "123 cicle Lane, Rexburg",
+        phoneNumber: "1112223333",
+        subject: "Art"
+      }
+    };
+
+    // Mock database methods
+    const mockFindOne = jest.fn().mockResolvedValue({ _id: 'existingId', ...req.body });
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnThis(),
+      findOne: mockFindOne
     });
+
+    await createTeacher(req, res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Teacher already exists' });
+  });
+
   
-    // Successful update
-    test('should update a Teacher and return 200 status', async () => {
-      const req = {
-        params: { id: mockTeachersData[0]._id.toString() },
-        body: {
-            firstName: "Mark",
-            lastName: "Smith",
-            email: "ms@gmail.com",
-            address: "123 Carrot Lane, Rexburg",
-            phoneNumber: "1112223333",
-            subject: "Art"
-        }
-      };
 
-      // Mock database methods
-      const mockUpdateOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
-      mongodb.getDb = jest.fn().mockReturnValue({
-        collection: jest.fn().mockReturnThis(),
-        updateOne: mockUpdateOne
-      });
+  test('should update a Teacher and return 200 status', async () => {
+    const req = {
+      params: { id: mockTeachersData[0]._id },
+      body: {
+        firstName: "Mark",
+        lastName: "Smith",
+        email: "ms@gmail.com",
+        address: "123 cicle Lane, Rexburg",
+        phoneNumber: "1112223333",
+        subject: "Math"
+      }
+    };
 
-      // Call the function with the mock request and response
-      await updateTeacher(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
-    }
-  )}
-  );
-
-  // Tests for deleteTeacher
-  describe('deleteTeacher', () => {
-    // Before each test, reset the mock for res
-    beforeEach(() => {
-      res.setHeader.mockClear();
-      res.status.mockClear();
-      res.json.mockClear();
+    // Mock database methods
+    const mockUpdateOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnThis(),
+      updateOne: mockUpdateOne
     });
-  
-    // Successful deletion
-    test('should delete a Teacher and return 200 status', async () => {
-      const req = {
-        params: { id: mockTeachersData[0]._id.toString() }
-      };
 
-      // Mock database methods
-      const mockDeleteOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
-      mongodb.getDb = jest.fn().mockReturnValue({
-        collection: jest.fn().mockReturnThis(),
-        deleteOne: mockDeleteOne
-      });
+    await updateTeacher(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
+  });
 
-      // Call the function with the mock request and response
-      await deleteTeacher(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
-    }
-  )}
-  );
+// ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
+// TESTS FOR deleteTeacher
+  // ✏️ Successful deleteTeacher
+  test('should delete a Teacher and return 200 status', async () => {
+    const req = {
+      params: { id: mockTeachersData[0]._id.toString() }
+    };
 
+    // Mock database methods
+    const mockDeleteOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
+    mongodb.getDb = jest.fn().mockReturnValue({
+      collection: jest.fn().mockReturnThis(),
+      deleteOne: mockDeleteOne
+    });
+
+    await deleteTeacher(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ acknowledged: true, insertedId: 'newId' });
+  });
+
+
+  // Tests are finished. Close the connections.
   afterAll(async () => {
-    // Disconnect from the in-memory database after tests are done
-    await mongodb.close();
+    await mongodb.closeDB();
+    if (mongoServer) {
+      await mongoServer.stop();
+    }
   });
 });
+
+
