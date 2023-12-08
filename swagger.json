@@ -433,6 +433,9 @@
           "Enrollments"
         ],
         "description": "",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "body",
@@ -451,8 +454,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
@@ -897,12 +900,6 @@
                   "example": "any"
                 },
                 "email": {
-                  "example": "any"
-                },
-                "birthday": {
-                  "example": "any"
-                },
-                "gender": {
                   "example": "any"
                 },
                 "address": {
