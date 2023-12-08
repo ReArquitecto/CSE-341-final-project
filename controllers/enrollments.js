@@ -37,44 +37,73 @@ const getSingleEnrollment = async (req, res) => {
   }
 }
 
+// const createEnrollment = async (req, res) => {
+//   //#swagger.tags=['Enrollments'];
+//   try {
+//     const db = mongodb.getDb();
+    
+//     // Destructure trim and sanitize required fields
+//     let { courseInstanceId, studentId } = req.body;
+//     courseInstanceId = validator.trim(courseInstanceId);
+//     studentId = validator.trim(studentId);
+
+//     if (!courseInstanceId || !studentId) {
+//       return res.status(400).json({ message: 'Missing required fields' });
+//     }
+
+//     // Validate courseInstanceId
+//     if (!validator.isAlphanumeric(courseInstanceId)) {
+//       return res.status(400).json({ message: 'Invalid courseInstanceId' });
+//     }
+
+//     // Validate studentId
+//     if (!validator.isAlphanumeric(studentId)) {
+//       return res.status(400).json({ message: 'Invalid studentId' });
+//     }
+
+//     const enrollment = {
+//       courseInstanceId,
+//       studentId,
+//     };
+
+//     const response = await db.collection('enrollments').insertOne(enrollment);
+//     if (response.acknowledged) {
+//       res.status(201).json(response.ops[0]);
+//     } else {
+//       res.status(500).json(response.error || 'Error creating enrollment');
+//     }
+//   } catch (err) {
+//     res.status(400).json({ 
+//       message: 'Error occurred', 
+//       error: err.message,
+//     });
+//   }
+// }
+
 const createEnrollment = async (req, res) => {
   //#swagger.tags=['Enrollments'];
   try {
     const db = mongodb.getDb();
-    
-    // Destructure trim and sanitize required fields
+
     let { courseInstanceId, studentId } = req.body;
+
     courseInstanceId = validator.trim(courseInstanceId);
     studentId = validator.trim(studentId);
+    
 
     if (!courseInstanceId || !studentId) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    // Validate courseInstanceId
-    if (!validator.isAlphanumeric(courseInstanceId)) {
-      return res.status(400).json({ message: 'Invalid courseInstanceId' });
-    }
 
-    // Validate studentId
-    if (!validator.isAlphanumeric(studentId)) {
-      return res.status(400).json({ message: 'Invalid studentId' });
-    }
-
-    const enrollment = {
-      courseInstanceId,
-      studentId,
-    };
-
+    // Create new enrollment
+    const enrollment = { courseInstanceId, studentId };
     const response = await db.collection('enrollments').insertOne(enrollment);
-    if (response.acknowledged) {
-      res.status(201).json(response.ops[0]);
-    } else {
-      res.status(500).json(response.error || 'Error creating enrollment');
-    }
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(response);
   } catch (err) {
-    res.status(400).json({ 
-      message: 'Error occurred', 
+    res.status(500).json({
+      message: 'Error occurred',
       error: err.message,
     });
   }

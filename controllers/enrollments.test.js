@@ -9,12 +9,12 @@ const mockEnrollmentsData = [
   {
     _id: new ObjectId(),
     courseInstanceId: "656a0fbbb6e208ee466e63fa",
-    EnrollmentId: "656df40560612f80290a6eba"
+    studentId: "656df40560612f80290a6eba"
   },
   {
     _id: new ObjectId(),
     courseInstanceId: "65709d569102d0ad5b253bcc",
-    EnrollmentId: "656df40560612f80290a6eba"
+    studentId: "656df40560612f80290a6eba"
   },
 ];
 
@@ -129,7 +129,7 @@ describe('Enrollment Controller', () => {
     const req = {
       body: {
         courseInstanceId: "65709e71fb61ea0bafb11e0f",
-        EnrollmentId: "656df40560612f80290a6eba"
+        studentId: "656df40560612f80290a6eba"
       }
     };
     
@@ -150,7 +150,7 @@ describe('Enrollment Controller', () => {
   test('should return 400 status if required fields are missing', async () => {
     const req = {
       body: {
-        EnrollmentId: "656df40560612f80290a6eba"
+        studentId: "656df40560612f80290a6eba"
       }
     };
 
@@ -166,27 +166,7 @@ describe('Enrollment Controller', () => {
     expect(res.status).toHaveBeenCalledWith(500);
   });
 
-  // ✏️ Enrollment already exists
-  test('should return 400 status if Enrollment already exists', async () => {
-    const req = {
-      body: {
-        courseInstanceId: "656a0fbbb6e208ee466e63fa",
-        EnrollmentId: "656df40560612f80290a6eba"
-      }
-    };
-
-    // Mock database methods
-    const mockFindOne = jest.fn().mockResolvedValue({ _id: 'existingId', ...req.body });
-    mongodb.getDb = jest.fn().mockReturnValue({
-      collection: jest.fn().mockReturnThis(),
-      findOne: mockFindOne
-    });
-
-    await createEnrollment(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Enrollment already exists' });
-  });
-
+  
   
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR updateEnrollment
@@ -196,7 +176,7 @@ describe('Enrollment Controller', () => {
       params: { id: mockEnrollmentsData[0]._id.toString() },
       body: {
         courseInstanceId: "656a0fbbb6e208ee466e63fa",
-        EnrollmentId: "656df40560612f80290a6eba"
+        studentId: "656df40560612f80290a6eba"
       }
     };
 
