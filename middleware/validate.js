@@ -32,13 +32,13 @@ const saveCourseInstance = (req, res, next) => {
   const validationRule = {
     courseId: 'required|integer',
     teacherId: 'required|string', 
-    semester:'required|string',
+    semester: 'required|string',
     year: 'required|integer|digits:4',
-    location:'required|string',
-    startTime:'required|string',
-    endTime:'required|string',
-    schedule:'required|string',
-    maxStudentCount:'required|integer',
+    location: 'required|string',
+    startTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9] (AM|PM)?$/'],
+    endTime: ['required', 'string', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9] (AM|PM)?$/'],
+    schedule: 'required|string',
+    maxStudentCount: 'required|integer',
 
   };
   
@@ -77,6 +77,8 @@ const saveEnrollment = (req, res, next) => {
 
 const saveStudent = (req, res, next) => {
   const validationRule = {
+   courseInstanceId: 'required|integer',
+   studentId:'required|integer',
    firstName:'required|string', 
    lastName:'required|string', 
    email: 'required|email', 

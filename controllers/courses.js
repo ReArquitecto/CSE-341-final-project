@@ -125,11 +125,13 @@ const updateCourse = async (req, res) => {
       res.status(400).json('Must use a valid userinfo id to update a userinfo.');
     }
     
+    const courseId = new ObjectId(req.params.id);
     let { department, code, name, description, creditHours, prerequisites } = req.body;
     department = validator.trim(department);
     code = validator.trim(code);
     name = validator.trim(name);
     description = validator.trim(description);
+    creditHours = validator.trim(creditHours);
     prerequisites = validator.trim(prerequisites);
 
     if (!department || !code || !name || !description || !creditHours || !prerequisites) {
@@ -157,11 +159,10 @@ const updateCourse = async (req, res) => {
       return res.status(400).json({ message: 'Invalid description' });
     }
 
-        creditHours = parseInt(creditHours, 10); // Convert string to integer
-    if (!validator.isInt(String(creditHours))) {
+    // Validate code
+    if (!validator.isAlphanumeric(creditHours)) {
       return res.status(400).json({ message: 'Invalid credit hours' });
     }
-
 
     // Validate prerequites
     if (typeof prerequisites !== 'string') {
@@ -169,10 +170,10 @@ const updateCourse = async (req, res) => {
     }
 
     // Validate if course already exists
-    const courseExists = await db.collection('courses').findOne({ code });
-    if (courseExists) {
-      return res.status(400).json({ message: 'Course already exists' });
-    }
+    // const courseExists = await db.collection('courses').findOne({ code });
+    // if (courseExists) {
+    //   return res.status(400).json({ message: 'Course already exists' });
+    // }
 
     const course = {
       department,
@@ -183,7 +184,7 @@ const updateCourse = async (req, res) => {
       prerequisites
     };
 
-    const response = await db.collection('courses').updateOne({ _id: new ObjectId(req.params.id) }, { $set: course });
+    const response = await db.collection('courses').updateOne({ _id:courseId }, { $set: course });
 
     if (response.acknowledged) {
       res.status(201).json({ message: 'Course updated successfully' });

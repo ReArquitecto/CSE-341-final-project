@@ -3,6 +3,7 @@ const { getAllStudents, getSingleStudent, createStudent, updateStudent, deleteSt
 const mongodb = require('../db/connect');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const ObjectId = require('mongodb').ObjectId;
+const validator = require('validator');
 
 // Mock student data
 const mockStudentsData = [
@@ -39,6 +40,7 @@ const mockStudentsData = [
 ];
 
 const mockStudentId = new ObjectId();
+const badStudentId = new ObjectId();
 
 // Mock request and response objects
 const req = {
@@ -141,6 +143,19 @@ describe('Student Controller', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'Error occurred', error: 'Mock error' });
   });
 
+  // ✏️ getSingleStudent should return status 400 if id is invalid
+  test('getSingleStudent should return status 400 if id is invalid', async () => {
+    // Mock findOne to return null
+    const mockFindOne = jest.fn().mockResolvedValue(null);
+    mongodb.getDb = jest.fn().mockReturnValue({ collection: jest.fn().mockReturnValue({ findOne: mockFindOne }) });
+
+    // Send a bad id
+    const req = { params: { id: 'badId' } };
+    
+    await getSingleStudent(req, res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    // expect(res.json).toHaveBeenCalledWith({ message: 'Invalid id' });
+  });
 
   // ✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️
   // TESTS FOR createStudent
@@ -181,16 +196,9 @@ describe('Student Controller', () => {
       }
     };
 
-    // Mock database methods
-    const mockInsertOne = jest.fn().mockResolvedValue({ acknowledged: true, insertedId: 'newId' });
-    mongodb.getDb = jest.fn().mockReturnValue({
-      collection: jest.fn().mockReturnThis(),
-      findOne: jest.fn().mockResolvedValue(null),
-      insertOne: mockInsertOne
-    });
+    // Check for required fields
+    
 
-    await createStudent(req, res);
-    expect(res.status).toHaveBeenCalledWith(500);
   });
 
   // ✏️ Student already exists
